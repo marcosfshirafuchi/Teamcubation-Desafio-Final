@@ -2,12 +2,16 @@ package com.teamcubation.desafio_final.service;
 
 import com.teamcubation.desafio_final.dto.PartidaDto;
 import com.teamcubation.desafio_final.exception.DadosInvalidosException;
+import com.teamcubation.desafio_final.exception.NotFoundException;
+import com.teamcubation.desafio_final.model.Clube;
+import com.teamcubation.desafio_final.model.Estadio;
 import com.teamcubation.desafio_final.model.Partida;
 import com.teamcubation.desafio_final.repository.PartidaRepository;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class PartidaServiceImpl implements PartidaService{
@@ -29,9 +33,9 @@ public class PartidaServiceImpl implements PartidaService{
 //    @Override
 //    public Boolean validarDataPartidaParaCadastro(PartidaDto request) {
 //        // Obter a data de criação do clube mandante
-//        LocalDateTime dataCriacaoMandante = clubeService.obterDataCriacaoClube(request.clubeDaCasa().getId());
+//        LocalDateTime dataCriacaoMandante = partidaService.obterDataCriacaoClube(request.clubeDaCasa().getId());
 //
-//        LocalDateTime dataCriacaoVisitante = clubeService.obterDataCriacaoClube(request.clubeVisitante().getId());
+//        LocalDateTime dataCriacaoVisitante = partidaService.obterDataCriacaoClube(request.clubeVisitante().getId());
 //        validarDataPartida(request.horarioDaPartida(), dataCriacaoVisitante);
 //
 //        if (validarDataPartida(request.horarioDaPartida(), dataCriacaoMandante) == true || validarDataPartida(request.horarioDaPartida(), dataCriacaoVisitante) == true) {
@@ -47,10 +51,26 @@ public class PartidaServiceImpl implements PartidaService{
 //        }
    // }
 
-//    @Override
-//    public List<Partida> listarPartidas() {
-//        return this.partidaRepository.findAll();
-//    }
+    @Override
+    public List<Partida> listarTodasAsPartidas() {
+        return this.partidaRepository.findAll();
+    }
+
+    @Override
+    public Optional<Partida> buscarPartidaPorId(Long id) {
+        return this.partidaRepository.findById(id);
+    }
+
+    @Override
+    public void removerPartida(Long id) {
+        Optional<Partida> optionalPartida = partidaRepository.findById(id);
+        if (optionalPartida.isPresent()) {
+            partidaRepository.deleteById(id);
+        }else{
+            throw new NotFoundException("Partida não encontrada com o ID: " + id);
+        }
+    }
+
 
 //    @Override
 //    public Partida cadastrarPartida(PartidaDto partida) {

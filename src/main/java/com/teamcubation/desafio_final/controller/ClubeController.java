@@ -3,12 +3,9 @@ package com.teamcubation.desafio_final.controller;
 import com.teamcubation.desafio_final.dto.ClubeDto;
 import com.teamcubation.desafio_final.model.Clube;
 import com.teamcubation.desafio_final.service.ClubeService;
-
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;

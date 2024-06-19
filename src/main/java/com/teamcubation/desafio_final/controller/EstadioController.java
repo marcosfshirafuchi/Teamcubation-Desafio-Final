@@ -1,9 +1,7 @@
 package com.teamcubation.desafio_final.controller;
 
-import com.teamcubation.desafio_final.dto.ClubeDto;
+
 import com.teamcubation.desafio_final.dto.EstadioDto;
-import com.teamcubation.desafio_final.exception.ConflitoDadosException;
-import com.teamcubation.desafio_final.model.Clube;
 import com.teamcubation.desafio_final.model.Estadio;
 import com.teamcubation.desafio_final.service.EstadioService;
 import org.springframework.http.HttpStatus;
@@ -17,6 +15,14 @@ import java.util.Optional;
 @RequestMapping("/estadios")
 public class EstadioController {
     private EstadioService estadioService;
+    static String uf[] = {"AL", "AP", "AM", "BA",
+            "CE", "DF", "ES", "GO",
+            "MA", "MT", "MS", "MG",
+            "PA", "PB", "PR", "PE",
+            "PI", "RJ", "RN", "RS",
+            "RO", "RR", "SC", "SP",
+            "SE", "TO"};
+
 
     public EstadioController(EstadioService estadioService) {
         this.estadioService = estadioService;
@@ -28,6 +34,16 @@ public class EstadioController {
             Estadio estadio = new Estadio();
             if (estadioDto.nomeDoEstadio() == "" || estadioDto.siglaEstado() == "" || estadioDto.nomeDoEstadio().length() < 3) {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Dados inválidos");
+            }
+            boolean estadoBrasileiroProcurado = false;
+            for (int i = 0; i < uf.length; i++) {
+                if (estadioDto.siglaEstado().equals(uf[i])) {
+                    estadoBrasileiroProcurado = true;
+                    break;
+                }
+            }
+            if (estadoBrasileiroProcurado == false) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Estado inválido!");
             }
             estadio.setNomeDoEstadio(estadioDto.nomeDoEstadio());
             estadio.setSiglaEstado(estadioDto.siglaEstado());

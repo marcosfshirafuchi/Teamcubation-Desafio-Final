@@ -2,6 +2,7 @@ package com.teamcubation.desafio_final.controller;
 
 import com.teamcubation.desafio_final.dto.PartidaDto;
 import com.teamcubation.desafio_final.model.Clube;
+import com.teamcubation.desafio_final.model.Estadio;
 import com.teamcubation.desafio_final.model.Partida;
 import com.teamcubation.desafio_final.service.ClubeService;
 import com.teamcubation.desafio_final.service.EstadioService;
@@ -9,6 +10,7 @@ import com.teamcubation.desafio_final.service.PartidaService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -16,14 +18,15 @@ import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 
 @RestController
 @RequestMapping("/partidas")
 public class PartidaController {
-    private EstadioService estadioService;
+
     private PartidaService partidaService;
-    private ClubeService clubeService;
+
 
     public PartidaController(PartidaService partidaService) {
         this.partidaService = partidaService;
@@ -68,31 +71,13 @@ public class PartidaController {
         partida.setClubeVisitante(partidaDto.clubeVisitante());
         partida.setEstadio(partidaDto.estadio());
         partida.setGolsDoTimeDaCasa(partidaDto.golsDoTimeDaCasa());
-        partida.setGolsDoTimeVisitante(partida.getGolsDoTimeVisitante());
+        partida.setGolsDoTimeVisitante(partidaDto.golsDoTimeVisitante());
         partida.setHorarioDaPartida(partidaDto.horarioDaPartida());
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(this.partidaService.cadastrar(partida));
     }
 
-//    @GetMapping
-//    public ResponseEntity<List<Partida>> findAll() {
-//        return ResponseEntity.status(HttpStatus.OK).body(this.partidaService.listarPartidas());
-//    }
 
-
-
-//        @PostMapping
-//        public ResponseEntity<?> cadastrarPartida(@Valid @RequestBody PartidaDto partidaDto) {
-//
-//            Partida partida = new Partida();
-//            partida.setClubeDaCasa(partidaDto.clubeDaCasa());
-//            partida.setClubeVisitante(partidaDto.clubeVisitante());
-//            partida.setGolsDoTimeDaCasa(partidaDto.golsDoTimeDaCasa());
-//            partida.setGolsDoTimeVisitante(partidaDto.golsDoTimeVisitante());
-//            partida.setHorarioDaPartida(partidaDto.horarioDaPartida());
-//            partida.setEstadio(partidaDto.estadio());
-//            return ResponseEntity.status(HttpStatus.CREATED).body(partidaService.cadastrarPartida(partida));
-//        }
 
 //        @PutMapping("/{id}")
 //        public ResponseEntity<?> atualizarPartida(@PathVariable Long id, @Valid @RequestBody PartidaDto partida) {
@@ -100,22 +85,28 @@ public class PartidaController {
 //            return ResponseEntity.ok(partidaAtualizada);
 //        }
 
-//        @DeleteMapping("/{id}")
-//        public ResponseEntity<Void> removerPartida(@PathVariable Long id) {
-//            partidaService.removerPartida(id);
-//            return ResponseEntity.noContent().build();
-//        }
-//
-//        @GetMapping("/{id}")
-//        public ResponseEntity<Partida> buscarPartidaPorId(@PathVariable Long id) {
-//            Partida partida = partidaService.buscarPartidaPorId(id);
-//            return ResponseEntity.ok(partida);
-//        }
-//
-//        @GetMapping
-//        public ResponseEntity<Page<Partida>> listarTodasAsPartidas(Pageable pageable) {
-//            Page<Partida> partidas = partidaService.listarTodasAsPartidas(pageable);
-//            return ResponseEntity.ok(partidas);
-//        }
-
+    @DeleteMapping("/{id}")
+    public ResponseEntity<?> removerUmaPartida(@PathVariable Long id) {
+        try {
+            partidaService.removerPartida(id);
+            return ResponseEntity.noContent().build();
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Não existe partida para ser removida por esse id: " + id);
+        }
     }
+    @GetMapping("/{id}")
+    public ResponseEntity<Object> buscarPartidaPorId(@PathVariable Long id) {
+        Optional<Partida> optPartida = this.partidaService.buscarPartidaPorId(id);
+        if (optPartida.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Não registro da partida por esse id: " + id);
+        }
+        return ResponseEntity.status(HttpStatus.OK).body(optPartida.get());
+    }
+
+    @GetMapping
+    public ResponseEntity<List<Partida>> listarPartidas() {
+        List<Partida> partidas = partidaService.listarTodasAsPartidas();
+        return ResponseEntity.ok(partidas);
+    }
+
+}

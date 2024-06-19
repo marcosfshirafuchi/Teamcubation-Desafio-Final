@@ -5,9 +5,9 @@ import com.teamcubation.desafio_final.dto.EstadioDto;
 import com.teamcubation.desafio_final.model.Estadio;
 import com.teamcubation.desafio_final.repository.EstadioRepository;
 import org.springframework.stereotype.Service;
-
 import java.util.List;
 import java.util.Optional;
+
 @Service
 public class EstadioServiceImpl implements EstadioService{
     private final EstadioRepository estadioRepository;
@@ -43,9 +43,6 @@ public class EstadioServiceImpl implements EstadioService{
 
         if (stadiumOptional.isEmpty()) {
             return true;
-//            throw new RuntimeException("Stadium not found with name " + nomeDoEstadio + " in state " + siglaEstado);
-//            // Ou você pode criar uma exceção personalizada para representar o 404
-//            // throw new StadiumNotFoundException(name, state);
         }
         return false;
 
