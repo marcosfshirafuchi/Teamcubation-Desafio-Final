@@ -18,6 +18,6 @@ public interface EstadioRepository extends JpaRepository<Estadio, Long> {
     Optional<EstadioDto> findByNameAndState(String nomeDoEstadio, String siglaEstado);
 
     //Verifica o estadio pelo nome e não permite cadastrar
-    Optional<Estadio> procurarPeloNomeDoEstadio(String nomeDoEstadio);
+    Optional<Estadio> existsByNomeDoEstadio(String nomeDoEstadio);
 
 }

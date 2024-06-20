@@ -1,7 +1,6 @@
 package com.teamcubation.desafio_final.service;
 
 import com.teamcubation.desafio_final.dto.EstadioDto;
-import com.teamcubation.desafio_final.model.Clube;
 import com.teamcubation.desafio_final.model.Estadio;
 
 import java.util.List;
@@ -13,7 +12,7 @@ public interface EstadioService {
     List<Estadio> listarEstadios();
 
     Optional<Estadio> buscarPorId(Long id);
-    Boolean buscarEstadiopeloNomeEEstado(String nomeDoEstadio, String siglaEstado);
+
 
     Estadio editar(Long id,EstadioDto estadioDto);
     void verificarConflitoEstadio(Estadio estadio);

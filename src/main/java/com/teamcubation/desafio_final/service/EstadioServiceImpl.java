@@ -23,6 +23,7 @@ public class EstadioServiceImpl implements EstadioService{
         if (estadioRepository.existeEstadioComOMesmoNome(estadio.getNomeDoEstadio(), estadio.getSiglaEstado())) {
             throw new RuntimeException("Stadium with the same name in the state already exists");
         }
+        verificarConflitoEstadio(estadio);
         return this.estadioRepository.save(estadio);
     }
 
@@ -35,17 +36,7 @@ public class EstadioServiceImpl implements EstadioService{
     public Optional<Estadio> buscarPorId(Long id) {
         return this.estadioRepository.findById(id);
     }
-    @Override
-    public Boolean buscarEstadiopeloNomeEEstado(String nomeDoEstadio, String siglaEstado) {
-        Optional<EstadioDto> stadiumOptional = estadioRepository.findByNameAndState(nomeDoEstadio, siglaEstado);
 
-        if (stadiumOptional.isEmpty()) {
-            return true;
-        }
-        return false;
-
-
-    }
 
     @Override
     public Estadio editar(Long id,EstadioDto estadioDto) {
@@ -66,7 +57,7 @@ public class EstadioServiceImpl implements EstadioService{
 
     @Override
     public void verificarConflitoEstadio(Estadio estadio) {
-        Optional<Estadio> estadiosExistentes = estadioRepository.procurarPeloNomeDoEstadio(estadio.getNomeDoEstadio());
+        Optional<Estadio> estadiosExistentes = estadioRepository.existsByNomeDoEstadio(estadio.getNomeDoEstadio());
         if (!estadiosExistentes.isEmpty()) {
             throw new ConflitoDadosException("Já existe um estadio com o mesmo nome neste estado");
         }
