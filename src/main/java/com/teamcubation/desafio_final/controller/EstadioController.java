@@ -1,13 +1,11 @@
 package com.teamcubation.desafio_final.controller;
 
-
 import com.teamcubation.desafio_final.dto.EstadioDto;
 import com.teamcubation.desafio_final.model.Estadio;
 import com.teamcubation.desafio_final.service.EstadioService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
 import java.util.List;
 import java.util.Optional;
 
@@ -71,17 +69,18 @@ public class EstadioController {
     @PutMapping("/{id}")
     public ResponseEntity<?> update(@PathVariable Long id, @RequestBody EstadioDto estadioDto) {
         try{
+            Optional<Estadio> estadioExiste = this.estadioService.buscarPorId(id);
+            if (estadioExiste.isEmpty()){
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Estadio não encontrado com o ID: " + id);
+            }
             Estadio estadio = new Estadio();
             if (estadioDto.nomeDoEstadio().length() < 3) {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Dados inválidos");
             }
-            if (estadioService.buscarEstadiopeloNomeEEstado(estadioDto.nomeDoEstadio(),estadioDto.siglaEstado())==true){
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("O estádio não existe");
-            }
             estadio.setNomeDoEstadio(estadioDto.nomeDoEstadio());
             estadio.setSiglaEstado(estadioDto.siglaEstado());
             return ResponseEntity.status(HttpStatus.OK)
-                    .body(this.estadioService.salvar(estadio));
+                    .body(this.estadioService.editar(id,estadioDto));
         }catch (RuntimeException ex){
             return ResponseEntity.status(HttpStatus.CONFLICT).body("Já existe um estádio com o mesmo nome cadastrado!");
         }

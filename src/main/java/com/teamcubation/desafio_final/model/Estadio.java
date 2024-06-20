@@ -4,7 +4,6 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Size;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -12,7 +11,7 @@ import java.util.List;
 @Entity
 @Table
 public class Estadio{
-    //private static final long serialVersion = 1L;
+
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
@@ -24,7 +23,7 @@ public class Estadio{
 
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     @OneToMany(mappedBy = "estadio", fetch = FetchType.LAZY)
-    private List<Partida> partidas = new ArrayList<>();
+    private List<Partida> partidasEstadio = new ArrayList<>();
 
     public Long getId() {
         return id;

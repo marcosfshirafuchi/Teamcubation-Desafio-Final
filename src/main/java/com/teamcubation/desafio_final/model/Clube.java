@@ -10,7 +10,7 @@ import java.util.List;
 @Entity
 @Table
 public class Clube {
-    //private static final long serialVersion = 1L;
+
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
@@ -30,9 +30,7 @@ public class Clube {
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     @OneToMany(mappedBy = "clubeVisitante", fetch = FetchType.LAZY)
     private List<Partida> partidasClubeVisitante = new ArrayList<>();
-//    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
-//    @OneToMany(mappedBy = "",fetch = FetchType.LAZY)
-//    private Partida partida;
+
 
 
     public void setId(Long id) {

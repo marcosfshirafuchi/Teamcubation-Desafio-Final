@@ -16,4 +16,8 @@ public interface EstadioRepository extends JpaRepository<Estadio, Long> {
     //Verifica se o estádio existe
     @Query("SELECT e FROM Estadio e WHERE e.nomeDoEstadio = :nomeDoEstadio AND e.siglaEstado = :siglaEstado")
     Optional<EstadioDto> findByNameAndState(String nomeDoEstadio, String siglaEstado);
+
+    //Verifica o estadio pelo nome e não permite cadastrar
+    Optional<Estadio> procurarPeloNomeDoEstadio(String nomeDoEstadio);
+
 }

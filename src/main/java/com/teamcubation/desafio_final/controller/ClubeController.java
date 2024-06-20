@@ -51,7 +51,6 @@ public class ClubeController {
             if (clubeDto.dataDeCriacao().isAfter(hoje)) {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Não pode cadastrar data futura!");
             }
-            //clubeService.verificarConflitoClube(clube);
             clube.setNomeDoClube(clubeDto.nomeDoClube());
             clube.setSiglaEstado(clubeDto.siglaEstado());
             clube.setDataDeCriacao(clubeDto.dataDeCriacao());
@@ -64,8 +63,6 @@ public class ClubeController {
         }
     }
 
-
-
     @PutMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public ResponseEntity<?> update(@PathVariable Long id, @RequestBody ClubeDto clubeDto) {
@@ -75,7 +72,7 @@ public class ClubeController {
             if (clubeExiste.isEmpty()) {
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Clube não encontrado com o ID: " + id);
             }
-            if (clubeDto.nomeDoClube().length() <= 2) {
+            if (clubeDto.nomeDoClube().length() <2) {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("O nome do clude deve ter mais de duas letras!");
             }
             boolean estadoBrasileiroProcurado = false;
@@ -91,22 +88,7 @@ public class ClubeController {
             if (clubeDto.dataDeCriacao().isAfter(hoje)) {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Não pode cadastrar data futura!");
             }
-//            boolean existeClube = clubeService.clubeExiste(clubeDto.nomeDoClube());
-//            if (existeClube == false) {
-//                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("O clube não existe para fazer a atualização!");
-//            }
-//            if(clubeService.atualizarNomeClube(id, clubeDto.nomeDoClube(), clubeDto.siglaEstado())==false){
-//                return ResponseEntity.status(HttpStatus.CONFLICT).body("Já existe um clube com o mesmo nome neste estado!");
-//            }
-            //clubeService.atualizarDataDeCriacao(id, clubeDto.dataDeCriacao());
-            //clubeService.atualizarNomeClube(id, clubeDto.nomeDoClube(), clubeDto.siglaEstado());
-//            Clube clube = clubeExiste.get();
-//            clube.setNomeDoClube(clubeDto.nomeDoClube());
-//            clube.setSiglaEstado(clubeDto.siglaEstado());
-//            clube.setDataDeCriacao(clubeDto.dataDeCriacao());
-//            clube.setStatus(clubeDto.status());
             Clube clube = clubeService.editarClube(id, clubeDto);
-            //this.clubeService.salvar(clube)
             return ResponseEntity.status(HttpStatus.OK).body(clube);
         } catch (RuntimeException e) {
             return ResponseEntity.status(HttpStatus.CONFLICT).body("Já existe um clube com o mesmo nome neste estado!");
@@ -127,7 +109,6 @@ public class ClubeController {
     public ResponseEntity<List<Clube>> findAll() {
         return ResponseEntity.status(HttpStatus.OK).body(this.clubeService.listarClubes());
     }
-
 
     @GetMapping("/{id}")
     public ResponseEntity<Object> findById(@PathVariable Long id) {

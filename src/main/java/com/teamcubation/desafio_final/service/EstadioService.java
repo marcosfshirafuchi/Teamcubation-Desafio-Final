@@ -14,4 +14,7 @@ public interface EstadioService {
 
     Optional<Estadio> buscarPorId(Long id);
     Boolean buscarEstadiopeloNomeEEstado(String nomeDoEstadio, String siglaEstado);
+
+    Estadio editar(Long id,EstadioDto estadioDto);
+    void verificarConflitoEstadio(Estadio estadio);
 }

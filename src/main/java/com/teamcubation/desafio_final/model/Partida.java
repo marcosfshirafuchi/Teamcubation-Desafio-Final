@@ -3,13 +3,13 @@ package com.teamcubation.desafio_final.model;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 
-import java.io.Serializable;
+
 import java.time.LocalDateTime;
 
 @Entity
 @Table
 public class Partida {
-    //private static final long serialVersion = 1L;
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;

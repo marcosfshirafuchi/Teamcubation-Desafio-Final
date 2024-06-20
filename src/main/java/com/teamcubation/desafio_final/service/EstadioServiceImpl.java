@@ -1,7 +1,8 @@
 package com.teamcubation.desafio_final.service;
 
-
 import com.teamcubation.desafio_final.dto.EstadioDto;
+import com.teamcubation.desafio_final.exception.ConflitoDadosException;
+import com.teamcubation.desafio_final.exception.NotFoundException;
 import com.teamcubation.desafio_final.model.Estadio;
 import com.teamcubation.desafio_final.repository.EstadioRepository;
 import org.springframework.stereotype.Service;
@@ -21,10 +22,7 @@ public class EstadioServiceImpl implements EstadioService{
     public Estadio salvar(Estadio estadio) {
         if (estadioRepository.existeEstadioComOMesmoNome(estadio.getNomeDoEstadio(), estadio.getSiglaEstado())) {
             throw new RuntimeException("Stadium with the same name in the state already exists");
-            // Ou você pode criar uma exceção personalizada para representar o conflito
-            // throw new StadiumAlreadyExistsException(stadium.getName(), stadium.getState());
         }
-
         return this.estadioRepository.save(estadio);
     }
 
@@ -47,6 +45,31 @@ public class EstadioServiceImpl implements EstadioService{
         return false;
 
 
+    }
+
+    @Override
+    public Estadio editar(Long id,EstadioDto estadioDto) {
+        Optional<Estadio> optionalEstadio = estadioRepository.findById(id);
+        if (optionalEstadio.isPresent()) {
+            Estadio estadio = optionalEstadio.get();
+
+            // Atualizar os dados do clube
+            estadio.setNomeDoEstadio(estadioDto.nomeDoEstadio());
+            estadio.setSiglaEstado(estadioDto.siglaEstado());
+
+            // Salvar no banco de dados
+            return estadioRepository.save(estadio);
+        } else {
+            throw new NotFoundException("Estadio não encontrado com o ID: " + id);
+        }
+    }
+
+    @Override
+    public void verificarConflitoEstadio(Estadio estadio) {
+        Optional<Estadio> estadiosExistentes = estadioRepository.procurarPeloNomeDoEstadio(estadio.getNomeDoEstadio());
+        if (!estadiosExistentes.isEmpty()) {
+            throw new ConflitoDadosException("Já existe um estadio com o mesmo nome neste estado");
+        }
     }
 
 

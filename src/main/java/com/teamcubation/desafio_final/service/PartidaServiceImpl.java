@@ -1,12 +1,11 @@
 package com.teamcubation.desafio_final.service;
 
 import com.teamcubation.desafio_final.dto.PartidaDto;
-import com.teamcubation.desafio_final.exception.DadosInvalidosException;
 import com.teamcubation.desafio_final.exception.NotFoundException;
-import com.teamcubation.desafio_final.model.Clube;
-import com.teamcubation.desafio_final.model.Estadio;
 import com.teamcubation.desafio_final.model.Partida;
+import com.teamcubation.desafio_final.repository.EstadioRepository;
 import com.teamcubation.desafio_final.repository.PartidaRepository;
+import org.apache.coyote.BadRequestException;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -17,39 +16,19 @@ import java.util.Optional;
 public class PartidaServiceImpl implements PartidaService{
 
     private final PartidaRepository partidaRepository;
-
+    private final EstadioRepository estadioRepository;
 
     private ClubeService clubeService;
 
-    public PartidaServiceImpl(PartidaRepository partidaRepository) {
+    public PartidaServiceImpl(PartidaRepository partidaRepository, EstadioRepository estadioRepository) {
         this.partidaRepository = partidaRepository;
+        this.estadioRepository = estadioRepository;
     }
 
     @Override
     public Partida cadastrar(Partida partida) {
         return this.partidaRepository.save(partida);
     }
-
-//    @Override
-//    public Boolean validarDataPartidaParaCadastro(PartidaDto request) {
-//        // Obter a data de criação do clube mandante
-//        LocalDateTime dataCriacaoMandante = partidaService.obterDataCriacaoClube(request.clubeDaCasa().getId());
-//
-//        LocalDateTime dataCriacaoVisitante = partidaService.obterDataCriacaoClube(request.clubeVisitante().getId());
-//        validarDataPartida(request.horarioDaPartida(), dataCriacaoVisitante);
-//
-//        if (validarDataPartida(request.horarioDaPartida(), dataCriacaoMandante) == true || validarDataPartida(request.horarioDaPartida(), dataCriacaoVisitante) == true) {
-//            return true;
-//        } else {
-//            return false;
-//        }
-
-        // Obter a data de criação do clube visitante (se existir)
-//        if (request.getVisitanteId() != null) {
-//            LocalDateTime dataCriacaoVisitante = clubeService.getDataCriacaoClube(request.getVisitanteId());
-//            validarDataPartida(request.getDataPartida(), dataCriacaoVisitante);
-//        }
-   // }
 
     @Override
     public List<Partida> listarTodasAsPartidas() {
@@ -71,45 +50,23 @@ public class PartidaServiceImpl implements PartidaService{
         }
     }
 
+    @Override
+    public Partida atualizarPartida(Long id, PartidaDto partidaDto) throws BadRequestException {
+        Optional<Partida> optionalPartida = partidaRepository.findById(id);
+        if (optionalPartida.isEmpty()) {
+            throw new NotFoundException("Partida não encontrada com o ID: " + id);
+        }
 
-//    @Override
-//    public Partida cadastrarPartida(PartidaDto partida) {
-//        validarDadosPartida(partida);
-//        return partidaRepository.save(partida);
-//    }
+        Partida partida = optionalPartida.get();
+        partida.setClubeDaCasa(clubeService.findById(partidaDto.clubeDaCasa().getId()));
+        partida.setClubeVisitante(clubeService.findById(partidaDto.clubeVisitante().getId()));
+        partida.setGolsDoTimeDaCasa(partidaDto.golsDoTimeDaCasa());
+        partida.setGolsDoTimeVisitante(partidaDto.golsDoTimeVisitante());
+        partida.setEstadio(estadioRepository.findById(partidaDto.estadio().getId())
+                .orElseThrow(() -> new BadRequestException("Estádio não encontrado.")));
+        partida.setHorarioDaPartida(partidaDto.horarioDaPartida());
 
-//    @Override
-//    public Partida atualizarPartida(Long id, PartidaDto partida) {
-//        return null;
-//    }
+        return partidaRepository.save(partida);
+    }
 
-//    private Boolean validarDataPartida(LocalDateTime dataPartida, LocalDateTime dataCriacaoClube) {
-//        // Verificar se a data da partida é anterior à data de criação do clube
-//        if (dataPartida.isBefore(dataCriacaoClube)) {
-//            return true;
-//            //throw new DataInvalidaException("Data da partida não pode ser anterior à data de criação do clube.");
-//        }
-//        return false;
-//    }
-//    @Override
-//    public Partida cadastrarPartida(Partida partida) {
-//          return this.partidaRepository.save(partida);
-//    }
-//    @Override
-//    public Partida atualizarPartida(Long id, Partida partida) {
-//        Partida partidaExistente = partidaRepository.findById(id)
-//                .orElseThrow(() -> new RecursoNaoEncontradoException("Partida não encontrada"));
-//
-//        partida.setId(partidaExistente.getId());
-//        validarDadosPartida(partida);
-//        return partidaRepository.save(partida);
-//    }
-
-//    private void validarDadosPartida(Partida partida) {
-//        if (partida.getHorarioDaPartida() != null && partida.getHorarioDaPartida().isBefore(LocalDateTime.now())) {
-//            throw new DadosInvalidosException("A data e hora da partida não pode estar no passado");
-//        }
-//
-//
-//    }
 }

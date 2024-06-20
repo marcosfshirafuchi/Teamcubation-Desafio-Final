@@ -4,9 +4,9 @@ import com.teamcubation.desafio_final.dto.ClubeDto;
 import com.teamcubation.desafio_final.exception.ConflitoDadosException;
 import com.teamcubation.desafio_final.exception.DataInvalidaException;
 import com.teamcubation.desafio_final.exception.NotFoundException;
+import com.teamcubation.desafio_final.exception.ResourceNotFoundException;
 import com.teamcubation.desafio_final.model.Clube;
 import com.teamcubation.desafio_final.repository.ClubeRepository;
-import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -48,19 +48,6 @@ public class ClubeServiceImpl implements ClubeService{
         return clubeRepository.existePeloNome(nomeClube);
     }
 
-
-
-    @Override
-    @Transactional
-    public boolean atualizarNomeClube(Long id, String novoNome, String siglaEstado) {
-        int rowsUpdated = clubeRepository.updateNomeByIdAndDifferentSiglaEstado(id, novoNome, siglaEstado);
-        if (rowsUpdated == 1) {
-            //throw new IllegalStateException("Não foi possível atualizar o nome do clube com id " + id);
-            return true;
-        }
-        return false;
-    }
-
     @Override
     public void inativarClube(Long id) {
         Optional<Clube> optionalClube = clubeRepository.findById(id);
@@ -92,6 +79,12 @@ public class ClubeServiceImpl implements ClubeService{
         } else {
             throw new NotFoundException("Clube não encontrado com o ID: " + id);
         }
+    }
+
+    @Override
+    public Clube findById(Long id) {
+        Optional<Clube> clubeOptional = clubeRepository.findById(id);
+        return clubeOptional.orElseThrow(() -> new ResourceNotFoundException("Clube não encontrado com o id: " + id));
     }
 
     @Override
