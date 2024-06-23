@@ -32,12 +32,9 @@ public class ClubeController {
         try {
             Clube clube = new Clube();
             LocalDate hoje = LocalDate.now();
-
-
             if (clubeDto.nomeDoClube() == "" || clubeDto.siglaEstado() == "" || clubeDto.dataDeCriacao() == null || clubeDto.nomeDoClube().length() < 2) {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Dados inválidos");
             }
-
             boolean estadoBrasileiroProcurado = false;
             for (int i = 0; i < uf.length; i++) {
                 if (clubeDto.siglaEstado().equals(uf[i])) {
@@ -55,7 +52,6 @@ public class ClubeController {
             clube.setSiglaEstado(clubeDto.siglaEstado());
             clube.setDataDeCriacao(clubeDto.dataDeCriacao());
             clube.setStatus(clubeDto.status());
-
             return ResponseEntity.status(HttpStatus.CREATED)
                     .body(this.clubeService.salvar(clube));
         } catch (RuntimeException e) {

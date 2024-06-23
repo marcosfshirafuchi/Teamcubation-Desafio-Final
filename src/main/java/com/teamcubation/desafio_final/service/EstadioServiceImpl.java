@@ -23,7 +23,7 @@ public class EstadioServiceImpl implements EstadioService{
         if (estadioRepository.existeEstadioComOMesmoNome(estadio.getNomeDoEstadio(), estadio.getSiglaEstado())) {
             throw new RuntimeException("Stadium with the same name in the state already exists");
         }
-        verificarConflitoEstadio(estadio);
+
         return this.estadioRepository.save(estadio);
     }
 
@@ -47,7 +47,7 @@ public class EstadioServiceImpl implements EstadioService{
             // Atualizar os dados do clube
             estadio.setNomeDoEstadio(estadioDto.nomeDoEstadio());
             estadio.setSiglaEstado(estadioDto.siglaEstado());
-
+            //verificarConflitoEstadio(estadio);
             // Salvar no banco de dados
             return estadioRepository.save(estadio);
         } else {

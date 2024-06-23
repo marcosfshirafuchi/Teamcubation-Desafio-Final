@@ -33,6 +33,9 @@ public class ClubeServiceImpl implements ClubeService{
     @Override
     public Clube salvar(Clube clube) {
         verificarConflitoClube(clube);
+        if (clubeRepository.existsByNomeAndDifferentSiglaEstado(clube.getNome(), clube.getSiglaEstado())) {
+            throw new RuntimeException("Já existe um clube com o mesmo nome em mesma siglaEstado!");
+        }
         return this.clubeRepository.save(clube);
     }
     @Override
@@ -41,11 +44,6 @@ public class ClubeServiceImpl implements ClubeService{
         if (!clubesExistentes.isEmpty()) {
             throw new ConflitoDadosException("Já existe um clube com o mesmo nome neste estado");
         }
-    }
-
-    @Override
-    public boolean clubeExiste(String nomeClube) {
-        return clubeRepository.existePeloNome(nomeClube);
     }
 
     @Override

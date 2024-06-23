@@ -8,6 +8,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 
 public interface ClubeRepository extends JpaRepository<Clube, Long> {
 
@@ -30,4 +31,8 @@ public interface ClubeRepository extends JpaRepository<Clube, Long> {
 //    //Obtem a data de criação do clube
 //    @Query("SELECT c.dataDeCriacao FROM Clube c WHERE c.id = :clubeId")
 //    Optional<LocalDateTime> findDataCriacaoById(Long clubeId);
+
+    //Optional<Clube> findByNomeAndSiglaEstado(String nome, String siglaEstado);
+    @Query("SELECT COUNT(c) > 0 FROM Clube c WHERE c.nome = :nome AND c.siglaEstado = :siglaEstado")
+    boolean existsByNomeAndDifferentSiglaEstado(@Param("nome") String nome, @Param("siglaEstado") String siglaEstado);
 }
